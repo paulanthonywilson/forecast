@@ -26,6 +26,7 @@ defmodule Forecast.Mixfile do
       {:httpotion, github: "myfreeweb/httpotion"},
       {:jsonex, "2.0", github: "marcelog/jsonex"},
       {:ex_doc, github: "elixir-lang/ex_doc"},
-      ]
+      {:meck, github: "eproxus/meck", tag: "0.8"},
+    ]
   end
 end
