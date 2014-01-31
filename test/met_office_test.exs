@@ -54,10 +54,14 @@ end
 
 defmodule ApiDecodeTest do
   use ExUnit.Case
-  import ForecastMetOffice.Decode
+  import Forecast.MetOffice.Decode
+
+  def locations_json do
+    File.read!("#{Path.dirname(__FILE__)}/locations_fixture.json")
+  end
 
   test "decodes the Json" do
-    assert (File.read!("#{Path.dirname(__FILE__)}/locations_fixture.json") |> decode_site_list) == "hello"
+    assert (locations_json |> decode_site_list) == "hello"
   end
 end
 

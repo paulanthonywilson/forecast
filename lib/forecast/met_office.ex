@@ -23,6 +23,14 @@ defmodule Forecast.MetOffice do
 
   defmodule Decode do
 
+    def decode_site_list [{_,[{_, locations}]}] do
+      locations
+    end
+
+    def decode_site_list json do
+      json |> Jsonex.decode |> decode_site_list
+    end
+
   end
 
   def site_list do
