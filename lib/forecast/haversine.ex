@@ -1,5 +1,5 @@
 defmodule Forecast.Haversine do
-  @r 6371 # radius of the earth
+  @radius_of_earth_in_km 6371
 
   import :math, only: [sin: 1, cos: 1, acos: 1, pi: 0]
 
@@ -16,6 +16,6 @@ defmodule Forecast.Haversine do
   end
 
   def distance_km {lat1, lon1}, {lat2, lon2} do
-    acos(deg_sin(lat1) * deg_sin(lat2) + deg_cos(lat1) * deg_cos(lat2) * deg_cos(lon2 - lon1)) * @r
+    acos(deg_sin(lat1) * deg_sin(lat2) + deg_cos(lat1) * deg_cos(lat2) * deg_cos(lon2 - lon1)) * @radius_of_earth_in_km
   end
 end

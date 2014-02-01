@@ -57,7 +57,7 @@ defmodule ApiDecodeTest do
   import Forecast.MetOffice.Decode
 
   def locations_json do
-    File.read!("#{Path.dirname(__FILE__)}/locations_fixture.json")
+    File.read!("#{__DIR__}/locations_fixture.json")
   end
 
   test "decodes the Json" do
@@ -70,14 +70,32 @@ end
 
 defmodule InterpretTest do
   use ExUnit.Case
+  import Forecast.MetOffice.Interpret, only: [find_nearest: 3]
 
+  setup do
+    :meck.new(Forecast.Haversine)
+    :ok
+  end
+
+  teardown do
+    :meck.unload(Forecast.Haversine)
+    :ok
+  end
   def locations do
-    1..5 |> Enum.map(fn i -> [longitude: -3.0, latitude: 56.0 + i /10] end)
+    1..5 |> Enum.map(fn i -> [latitude: 56.0 + i / 10, longitude: -3.0] end)
   end
 
   test "find the nearest, finds the nearest" do
-    # assert [] == locations
+    :meck.expect(Forecast.Haversine, :distance_km,
+    fn {lat1, lon1}, {lat2, lon2} ->
+      assert lat1 == 56.6
+      assert lon1 == -3.0
+      assert lon2 == -3.0
 
+      (lat1 - lat2) * 10 |> Float.floor
+    end)
+
+    assert find_nearest(locations, {56.6, -3.0}, 1) == [[distance: 1, latitude: 56.5, longitude: -3.0]]
 
   end
 end
