@@ -27,10 +27,10 @@ defmodule Forecast.MetOffice do
       locations
         |> Enum.map(fn l ->
           [
-            elevation: l["elevation"],
+            elevation: binary_to_float(l["elevation"]),
             id: l["id"],
-            latitude: l["latitude"],
-            longitude: l["longitude"],
+            latitude: binary_to_float(l["latitude"]),
+            longitude: binary_to_float(l["longitude"]),
             name: l["name"],
             region: l["region"],
             unitaryAuthArea: l["unitaryAuthArea"],

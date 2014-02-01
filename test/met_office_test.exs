@@ -62,8 +62,8 @@ defmodule ApiDecodeTest do
 
   test "decodes the Json" do
     assert (locations_json |> decode_site_list) == [
-      [elevation: "933.0", id: "3072", latitude: "56.879", longitude: "-3.42", name: "Cairnwell", region: "ta", unitaryAuthArea: "Perth and Kinross"],
-      [elevation: "134.0", id: "3088", latitude: "56.852", longitude: "-2.264", name: "Inverbervie", region: "gr", unitaryAuthArea: "Aberdeenshire"]]
+      [elevation: 933.0, id: "3072", latitude: 56.879, longitude: -3.42, name: "Cairnwell", region: "ta", unitaryAuthArea: "Perth and Kinross"],
+      [elevation: 134.0, id: "3088", latitude: 56.852, longitude: -2.264, name: "Inverbervie", region: "gr", unitaryAuthArea: "Aberdeenshire"]]
   end
 end
 
