@@ -61,7 +61,24 @@ defmodule ApiDecodeTest do
   end
 
   test "decodes the Json" do
-    assert (locations_json |> decode_site_list) == "hello"
+    assert (locations_json |> decode_site_list) == [
+      [elevation: "933.0", id: "3072", latitude: "56.879", longitude: "-3.42", name: "Cairnwell", region: "ta", unitaryAuthArea: "Perth and Kinross"],
+      [elevation: "134.0", id: "3088", latitude: "56.852", longitude: "-2.264", name: "Inverbervie", region: "gr", unitaryAuthArea: "Aberdeenshire"]]
+  end
+end
+
+
+defmodule InterpretTest do
+  use ExUnit.Case
+
+  def locations do
+    1..5 |> Enum.map(fn i -> [longitude: -3.0, latitude: 56.0 + i /10] end)
+  end
+
+  test "find the nearest, finds the nearest" do
+    # assert [] == locations
+
+
   end
 end
 

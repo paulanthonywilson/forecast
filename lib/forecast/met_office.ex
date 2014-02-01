@@ -25,6 +25,18 @@ defmodule Forecast.MetOffice do
 
     def decode_site_list [{_,[{_, locations}]}] do
       locations
+        |> Enum.map(fn l ->
+          [
+            elevation: l["elevation"],
+            id: l["id"],
+            latitude: l["latitude"],
+            longitude: l["longitude"],
+            name: l["name"],
+            region: l["region"],
+            unitaryAuthArea: l["unitaryAuthArea"],
+          ]
+        end)
+
     end
 
     def decode_site_list json do
@@ -33,8 +45,19 @@ defmodule Forecast.MetOffice do
 
   end
 
-  def site_list do
-    ApiData.fetch "wxfcs/all/json/sitelist", [res: "daily"]
+
+  defmodule Interpret do
+
   end
+
+  def site_list do
+    case ApiData.fetch("wxfcs/all/json/sitelist", [res: "daily"]) do
+      {:ok, json} -> json |> Decode.decode_site_list
+      {status, body} -> {status, body}
+    end
+      |> Decode.decode_site_list
+  end
+
+
 end
 
