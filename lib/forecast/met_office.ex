@@ -22,15 +22,21 @@ defmodule Forecast.MetOffice do
   end
 
   defmodule Decode do
+    defp safe_to_float(nil) do 0.0 end
+    defp safe_to_float(s) do
+      case Float.parse(s) do
+        {result, _remainder} -> result
+      end
+    end
 
     def decode_site_list [{_,[{_, locations}]}] do
       locations
         |> Enum.map(fn l ->
           [
-            elevation: binary_to_float(l["elevation"]),
+            elevation: safe_to_float(l["elevation"]),
             id: l["id"],
-            latitude: binary_to_float(l["latitude"]),
-            longitude: binary_to_float(l["longitude"]),
+            latitude: safe_to_float(l["latitude"]),
+            longitude: safe_to_float(l["longitude"]),
             name: l["name"],
             region: l["region"],
             unitaryAuthArea: l["unitaryAuthArea"],
@@ -65,9 +71,14 @@ defmodule Forecast.MetOffice do
       {:ok, json} -> json |> Decode.decode_site_list
       {status, body} -> {status, body}
     end
-      |> Decode.decode_site_list
   end
 
+  def nearest_sites(latlon, count) do
+    case site_list do
+      error = {:error, body} -> error
+      locations -> Interpret.find_nearest(locations, latlon, count)
+    end
+  end
 
 end
 

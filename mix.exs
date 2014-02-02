@@ -5,6 +5,7 @@ defmodule Forecast.Mixfile do
     [ app: :forecast,
       version: "0.0.1",
       elixir: "~> 0.12.2",
+      escript_main_module: Forecast.CLI,
       deps: deps ]
   end
 
