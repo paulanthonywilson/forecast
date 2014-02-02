@@ -3,7 +3,7 @@ defmodule Forecast.CLI do
   import Forecast.MetOffice, only: [nearest_sites: 2]
 
 
-  def main(argv) do
+  def main(_argv) do
     latitude = get_float("Latitude?")
     longitude = get_float("Longitude?")
     count = get_count
@@ -12,7 +12,7 @@ defmodule Forecast.CLI do
   end
 
   def get_float(prompt) do
-    case Float.parse(IO.gets("#{prompt} ")) do
+    case IO.gets("#{prompt} ") |> String.strip |> Float.parse do
       :error -> get_float(prompt)
       {value, _} -> value
     end
