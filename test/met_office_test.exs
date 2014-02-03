@@ -21,19 +21,21 @@ defmodule MetOfficeDataTest do
   test "successful request returns ok with the body" do
     stub_httpotion_get fn _url, _agent -> Response[status_code: 200, body: "everything is fine"] end
 
-    assert Forecast.MetOffice.ApiData.fetch("hi", []) == {:ok, "everything is fine"}
+    assert Forecast.MetOffice.ApiData.fetch("hi", []) == "everything is fine"
   end
 
-  test "unnsuccessful request returns error with the body" do
+  test "unsuccessful request raises an exception" do
     stub_httpotion_get fn _url, _agent -> Response[status_code: 500, body: "everything is terrible"] end
-    assert Forecast.MetOffice.ApiData.fetch("hi", []) == {:error, "everything is terrible"}
+    assert_raise RuntimeError, "Met Office returned status code '500' with body:\neverything is terrible", fn ->
+      assert Forecast.MetOffice.ApiData.fetch("hi", []) == {:error, "everything is terrible"}
+    end
   end
 
 
   test "the metoffice url is used with the api key" do
     stub_httpotion_get fn url, _ ->
       assert url == "http://datapoint.metoffice.gov.uk/public/data/val/abc/def?key=f016d482-0238-42e0-919d-c580163410b3"
-      Response.new
+      Response[status_code: 200]
     end
 
     fetch "abc/def", []
@@ -43,7 +45,7 @@ defmodule MetOfficeDataTest do
   test "url with extra parameter" do
     stub_httpotion_get fn url, _ ->
       assert url == "http://datapoint.metoffice.gov.uk/public/data/val/abc/def?res=daily&key=f016d482-0238-42e0-919d-c580163410b3"
-      Response.new
+      Response[status_code: 200]
     end
 
     fetch "abc/def", [res: "daily"]

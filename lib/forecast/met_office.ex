@@ -9,8 +9,8 @@ defmodule Forecast.MetOffice do
     def fetch(url_portion, params) do
       url = "http://datapoint.metoffice.gov.uk/public/data/val/#{url_portion}?#{param_string(params)}"
       case HTTPotion.get(url, @user_agent) do
-        Response[body: body, status_code: status, headers: _headers ] when status in 200..299 -> { :ok, body }
-        Response[body: body, status_code: _status, headers: _headers ] -> { :error, body }
+        Response[body: body, status_code: status, headers: _headers ] when status in 200..299 -> body
+        Response[body: body, status_code: status, headers: _headers ] -> raise "Met Office returned status code '#{status}' with body:\n#{body}"
       end
     end
 
@@ -66,18 +66,11 @@ defmodule Forecast.MetOffice do
     end
   end
 
-  def site_list do
-    case ApiData.fetch("wxfcs/all/json/sitelist", [res: "daily"]) do
-      {:ok, json} -> json |> Decode.decode_site_list
-      {status, body} -> {status, body}
-    end
-  end
 
   def nearest_sites(latlon, count) do
-    case site_list do
-      error = {:error, body} -> error
-      locations -> Interpret.find_nearest(locations, latlon, count)
-    end
+    ApiData.fetch("wxfcs/all/json/sitelist", [res: "daily"])
+      |> Decode.decode_site_list
+      |> Interpret.find_nearest(latlon, count)
   end
 
 end
