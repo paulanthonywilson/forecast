@@ -52,7 +52,9 @@ defmodule Forecast.MetOffice do
   end
 
 
-  defmodule Interpret do
+
+
+  defmodule InterpretSiteList do
     import Forecast.Haversine, only: [distance_km: 2]
     def find_nearest(locations, current_location, count) do
       locations

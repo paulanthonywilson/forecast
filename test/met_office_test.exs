@@ -62,7 +62,7 @@ defmodule ApiDecodeTest do
     File.read!("#{__DIR__}/locations_fixture.json")
   end
 
-  test "decodes the Json" do
+  test "decodes the locations Json" do
     assert (locations_json |> decode_site_list) == [
       [elevation: 933.0, id: "3072", latitude: 56.879, longitude: -3.42, name: "Cairnwell", region: "ta", unitaryAuthArea: "Perth and Kinross"],
       [elevation: 134.0, id: "3088", latitude: 56.852, longitude: -2.264, name: "Inverbervie", region: "gr", unitaryAuthArea: "Aberdeenshire"]]
@@ -70,9 +70,9 @@ defmodule ApiDecodeTest do
 end
 
 
-defmodule InterpretTest do
+defmodule InterpretSiteListTest do
   use ExUnit.Case
-  import Forecast.MetOffice.Interpret, only: [find_nearest: 3]
+  import Forecast.MetOffice.InterpretSiteList, only: [find_nearest: 3]
 
   setup do
     :meck.new(Forecast.Haversine)
@@ -83,6 +83,7 @@ defmodule InterpretTest do
     :meck.unload(Forecast.Haversine)
     :ok
   end
+
   def locations do
     1..5 |> Enum.map(fn i -> [latitude: 56.0 + i / 10, longitude: -3.0] end)
   end
