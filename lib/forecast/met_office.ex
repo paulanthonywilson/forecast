@@ -68,6 +68,16 @@ defmodule Forecast.MetOffice do
     end
   end
 
+  defmodule Decode5DayJson do
+    defrecord Header, name: nil, units: nil
+
+    def decode_headers  [{"SiteRep", [{"Wx", [{"Param", headings}]}|_]}] do
+      headings
+        |> Enum.map(fn h -> {h["name"], Header[name: h["$"], units: h["units"]]} end)
+        |> HashDict.new
+    end
+
+  end
 
   def nearest_sites(latlon, count) do
     ApiData.fetch("wxfcs/all/json/sitelist", [res: "daily"])

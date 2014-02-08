@@ -103,3 +103,18 @@ defmodule InterpretSiteListTest do
   end
 end
 
+defmodule DecodeFiveDaySiteForcast do
+  use ExUnit.Case
+  import Forecast.MetOffice.Decode5DayJson, only: [decode_headers: 1]
+  alias Forecast.MetOffice.Decode5DayJson.Header
+
+  def site5day_json do
+    File.read!("#{__DIR__}/site5day_fixture.json") |> Jsonex.decode
+  end
+
+  test "decoding headers" do
+    headers = decode_headers(site5day_json)
+    assert (headers |> HashDict.keys |> Enum.sort) == ["D", "F", "G", "H", "Pp", "S", "T", "U", "V", "W"]
+    assert headers["D"] == Header[name: "Wind Direction", units: "compass"]
+  end
+end
