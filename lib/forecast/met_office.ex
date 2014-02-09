@@ -21,7 +21,7 @@ defmodule Forecast.MetOffice do
     end
   end
 
-  defmodule Decode do
+  defmodule DecodeSiteList do
 
     def decode_site_list [{_,[{_, locations}]}] do
       locations
@@ -101,12 +101,20 @@ defmodule Forecast.MetOffice do
         end)
           |> List.flatten
     end
+    def decode_forecasts json do
+      json |> Jsonex.decode |> decode_forecasts
+    end
   end
 
   def nearest_sites(latlon, count) do
     ApiData.fetch("wxfcs/all/json/sitelist", [res: "daily"])
-      |> Decode.decode_site_list
+      |> DecodeSiteList.decode_site_list
       |> Interpret.find_nearest(latlon, count)
+  end
+
+  def site_5day_forecast(site_id) do
+    ApiData.fetch("wxfcs/all/json/#{site_id}", [res: "3hourly"])
+      |> Decode5DayJson.decode_forecasts
   end
 
 end

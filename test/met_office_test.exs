@@ -56,7 +56,7 @@ end
 
 defmodule ApiDecodeTest do
   use ExUnit.Case
-  import Forecast.MetOffice.Decode
+  import Forecast.MetOffice.DecodeSiteList
 
   def locations_json do
     File.read!("#{__DIR__}/locations_fixture.json")
