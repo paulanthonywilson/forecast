@@ -29,4 +29,6 @@ defmodule ForecastTest do
     assert Forecast.nearest_sites({55.6, -3.1}, 4) == {:error, "Oh dear!"}
 
   end
+
+
 end

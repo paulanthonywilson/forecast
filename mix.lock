@@ -1,4 +1,5 @@
-[ "ex_doc": {:git, "git://github.com/elixir-lang/ex_doc.git", "aecbe8cf755fc81d76e2924d69a33642b7945af9", []},
+[ "chronos": {:git, "git://github.com/nurugger07/chronos.git", "666b173044e51b837ffc63c3cbcabfc7981f104a", []},
+  "ex_doc": {:git, "git://github.com/elixir-lang/ex_doc.git", "aecbe8cf755fc81d76e2924d69a33642b7945af9", []},
   "httpotion": {:git, "git://github.com/myfreeweb/httpotion.git", "3f97f62bbf40e7b941e3b52dd130cf95b6b3fb6e", []},
   "ibrowse": {:git, "git://github.com/cmullaparthi/ibrowse.git", "d824491d37449763ac44398f8494731e0c1418c1", []},
   "json_ex": {:git, "git://github.com/marcelog/jsonex.git", "feb4a5b8fbb62e3910923a4325795576fa014c34", []},

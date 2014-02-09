@@ -7,6 +7,7 @@ defmodule Forecast do
     Forecast.Supervisor.start_link
   end
 
+
   def nearest_sites(latlon, count) do
     try do
     {:ok, Forecast.MetOffice.nearest_sites(latlon, count)}

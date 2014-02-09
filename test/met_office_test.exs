@@ -56,13 +56,13 @@ end
 
 defmodule ApiDecodeTest do
   use ExUnit.Case
-  import Forecast.MetOffice.Decode
+  import Forecast.MetOffice.DecodeSiteList
 
   def locations_json do
     File.read!("#{__DIR__}/locations_fixture.json")
   end
 
-  test "decodes the Json" do
+  test "decodes the locations Json" do
     assert (locations_json |> decode_site_list) == [
       [elevation: 933.0, id: "3072", latitude: 56.879, longitude: -3.42, name: "Cairnwell", region: "ta", unitaryAuthArea: "Perth and Kinross"],
       [elevation: 134.0, id: "3088", latitude: 56.852, longitude: -2.264, name: "Inverbervie", region: "gr", unitaryAuthArea: "Aberdeenshire"]]
@@ -70,9 +70,9 @@ defmodule ApiDecodeTest do
 end
 
 
-defmodule InterpretTest do
+defmodule InterpretSiteListTest do
   use ExUnit.Case
-  import Forecast.MetOffice.Interpret, only: [find_nearest: 3]
+  import Forecast.MetOffice.InterpretSiteList, only: [find_nearest: 3]
 
   setup do
     :meck.new(Forecast.Haversine)
@@ -83,6 +83,7 @@ defmodule InterpretTest do
     :meck.unload(Forecast.Haversine)
     :ok
   end
+
   def locations do
     1..5 |> Enum.map(fn i -> [latitude: 56.0 + i / 10, longitude: -3.0] end)
   end
@@ -102,3 +103,58 @@ defmodule InterpretTest do
   end
 end
 
+defmodule DecodeFiveDaySiteForcast do
+  use ExUnit.Case
+  import Forecast.MetOffice.Decode5DayJson
+
+  def site5day_json do
+    File.read!("#{__DIR__}/site5day_fixture.json")
+  end
+
+  def site5day_json_decoded do
+    site5day_json |> Jsonex.decode
+  end
+
+
+  test "decode forecasts" do
+    forecasts = site5day_json_decoded |> decode_forecasts
+    assert (forecasts |> length) == 34 #?? check
+    [first|_] = forecasts
+    assert first.feels_like_temperature == 6
+    assert first.wind_gust == 40
+    assert first.screen_relative_humidity == 73
+    assert first.temperature == 10
+    assert first.visibility == "VG"
+    assert first.wind_direction == "SW"
+    assert first.wind_speed == 25
+    assert first.max_uv_index == 0
+    assert first.weather_type == 7
+    assert first.datetime == {{2014, 2, 5}, {18, 0, 0}}
+  end
+
+  test "decode location" do
+    location = site5day_json_decoded |> decode_location
+    assert location.id == "3772"
+    assert location.latitude == 51.479
+    assert location.longitude == -0.449
+    assert location.name == "HEATHROW"
+    assert location.country == "ENGLAND"
+    assert location.continent == "EUROPE"
+    assert location.elevation == 25.0
+  end
+
+
+  test "forecast time" do
+    assert (site5day_json_decoded |> decode_forecast_date_time) == {{2014, 2, 5}, {21, 0, 0}}
+  end
+
+  test "decode all" do
+    forecast = site5day_json |> decode_all
+
+    assert forecast.location.name == "HEATHROW"
+    assert forecast.forecast_date_time == {{2014,2,5}, {21,0,0}}
+    assert length(forecast.forecasts) == 34
+  end
+
+
+end

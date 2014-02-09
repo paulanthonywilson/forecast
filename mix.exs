@@ -28,6 +28,6 @@ defmodule Forecast.Mixfile do
       {:jsonex, github: "paulanthonywilson/jsonex"},
       {:ex_doc, github: "elixir-lang/ex_doc"},
       {:meck, github: "eproxus/meck", tag: "0.8"},
-    ]
+      ]
   end
 end
