@@ -12,7 +12,8 @@ defmodule Forecast.MetOffice.Decode5DayJson do
     wind_direction: nil,
     wind_speed: nil,
     max_uv_index: nil,
-    weather_type: nil
+    weather_type: nil,
+    chance_precipitation: nil
 
   defrecord Location,
     id: nil,
@@ -39,6 +40,7 @@ defmodule Forecast.MetOffice.Decode5DayJson do
               wind_speed: f["S"] |> safe_to_integer,
               max_uv_index: f["U"] |> safe_to_integer,
               weather_type: f["W"] |> safe_to_integer,
+              chance_precipitation: f["Pp"] |> safe_to_integer,
               datetime: {day, forecast_time(f)},
               ]
           end)

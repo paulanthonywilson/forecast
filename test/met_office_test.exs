@@ -130,6 +130,7 @@ defmodule DecodeFiveDaySiteForcast do
     assert first.max_uv_index == 0
     assert first.weather_type == 7
     assert first.datetime == {{2014, 2, 5}, {18, 0, 0}}
+    assert first.chance_precipitation == 18
   end
 
   test "decode location" do
