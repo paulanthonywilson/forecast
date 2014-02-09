@@ -78,7 +78,7 @@ defmodule Forecast.MetOffice.Decode5DayJson do
 
   defp forecast_time raw_forecast do
     minutes = safe_to_integer(raw_forecast["$"])
-    {minutes / 60, rem(minutes, 60), 0}
+    {trunc(minutes / 60), rem(minutes, 60), 0}
   end
 
 end
