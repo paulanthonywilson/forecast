@@ -15,4 +15,12 @@ defmodule Forecast do
       e in [RuntimeError] -> {:error, e.message}
     end
   end
+
+  def site_5day_forecast(site_id) do
+    try do
+    {:ok, Forecast.MetOffice.site_5day_forecast(site_id)}
+    rescue
+      e in [RuntimeError] -> {:error, e.message}
+    end
+  end
 end
