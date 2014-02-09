@@ -105,15 +105,19 @@ end
 
 defmodule DecodeFiveDaySiteForcast do
   use ExUnit.Case
-  import Forecast.MetOffice.Decode5DayJson, only: [decode_forecasts: 1]
+  import Forecast.MetOffice.Decode5DayJson
 
   def site5day_json do
-    File.read!("#{__DIR__}/site5day_fixture.json") |> Jsonex.decode
+    File.read!("#{__DIR__}/site5day_fixture.json")
+  end
+
+  def site5day_json_decoded do
+    site5day_json |> Jsonex.decode
   end
 
 
   test "decode forecasts" do
-    forecasts = site5day_json |> decode_forecasts
+    forecasts = site5day_json_decoded |> decode_forecasts
     assert (forecasts |> length) == 34 #?? check
     [first|_] = forecasts
     assert first.feels_like_temperature == 6
@@ -125,7 +129,31 @@ defmodule DecodeFiveDaySiteForcast do
     assert first.wind_speed == 25
     assert first.max_uv_index == 0
     assert first.weather_type == 7
+    assert first.datetime == {{2014, 2, 5}, {18, 0, 0}}
+  end
 
+  test "decode location" do
+    location = site5day_json_decoded |> decode_location
+    assert location.id == "3772"
+    assert location.latitude == 51.479
+    assert location.longitude == -0.449
+    assert location.name == "HEATHROW"
+    assert location.country == "ENGLAND"
+    assert location.continent == "EUROPE"
+    assert location.elevation == 25.0
+  end
+
+
+  test "forecast time" do
+    assert (site5day_json_decoded |> decode_forecast_date_time) == {{2014, 2, 5}, {21, 0, 0}}
+  end
+
+  test "decode all" do
+    forecast = site5day_json |> decode_all
+
+    assert forecast.location.name == "HEATHROW"
+    assert forecast.forecast_date_time == {{2014,2,5}, {21,0,0}}
+    assert length(forecast.forecasts) == 34
   end
 
 

@@ -15,4 +15,13 @@ defmodule ConversionsTest do
     assert safe_to_float(nil) == 0.0
     assert safe_to_float("oooh") == 0.0
   end
+
+
+  test "parses date " do
+    assert parse_date("2014-02-05Z") == {2014, 2, 5}
+  end
+
+  test "parses date time" do
+    assert parse_date_time("2014-02-05T21:05:11Z") == {{2014,2,5}, {21,5,11}}
+  end
 end
