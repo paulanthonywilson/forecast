@@ -22,25 +22,19 @@ defmodule Forecast.MetOffice do
   end
 
   defmodule Decode do
-    defp safe_to_float(nil) do 0.0 end
-    defp safe_to_float(s) do
-      case Float.parse(s) do
-        {result, _remainder} -> result
-      end
-    end
 
     def decode_site_list [{_,[{_, locations}]}] do
       locations
         |> Enum.map(fn l ->
           [
-            elevation: safe_to_float(l["elevation"]),
+            elevation: Forecast.safe_to_float(l["elevation"]),
             id: l["id"],
-            latitude: safe_to_float(l["latitude"]),
-            longitude: safe_to_float(l["longitude"]),
+            latitude: Forecast.safe_to_float(l["latitude"]),
+            longitude: Forecast.safe_to_float(l["longitude"]),
             name: l["name"],
             region: l["region"],
             unitaryAuthArea: l["unitaryAuthArea"],
-          ]
+            ]
         end)
 
     end
@@ -61,22 +55,52 @@ defmodule Forecast.MetOffice do
         |> Enum.map(fn l ->
           [{:distance, distance_km(current_location, {l[:latitude], l[:longitude]})} | l]
         end)
-        |> Enum.sort(fn lhs, rhs ->
-          lhs[:distance] < rhs[:distance]
-        end)
-        |> Enum.take(count)
+          |> Enum.sort(fn lhs, rhs ->
+            lhs[:distance] < rhs[:distance]
+          end)
+            |> Enum.take(count)
     end
   end
 
   defmodule Decode5DayJson do
+    import Forecast, only: [safe_to_integer: 1]
+
     defrecord Header, name: nil, units: nil
+    defrecord PointForecast, date: nil,
+    time: nil,
+    feels_like_temperature: nil,
+    wind_gust: nil,
+    screen_relative_humidity: nil,
+    temperature: nil,
+    visibility: nil,
+    wind_direction: nil,
+    wind_speed: nil,
+    max_uv_index: nil,
+    weather_type: nil
 
-    def decode_headers  [{"SiteRep", [{"Wx", [{"Param", headings}]}|_]}] do
-      headings
-        |> Enum.map(fn h -> {h["name"], Header[name: h["$"], units: h["units"]]} end)
-        |> HashDict.new
+    def decode_forecasts [{"SiteRep", [_, {"DV", [_,_,{"Location",forecasts}]}]}] do
+      forecasts["Period"]
+        |> Enum.map(fn day_forecasts ->
+          day = day_forecasts["value"]
+          day_forecasts["Rep"]
+            |> Enum.map(fn f ->
+              PointForecast[
+                feels_like_temperature: f["F"] |> safe_to_integer,
+                wind_gust: f["G"] |> safe_to_integer,
+                screen_relative_humidity: f["H"] |> safe_to_integer,
+                temperature: f["T"] |> safe_to_integer,
+                visibility: f["V"],
+                wind_direction: f["D"],
+                wind_speed: f["S"] |> safe_to_integer,
+                max_uv_index: f["U"] |> safe_to_integer,
+                weather_type: f["W"] |> safe_to_integer,
+
+                ]
+            end)
+
+        end)
+          |> List.flatten
     end
-
   end
 
   def nearest_sites(latlon, count) do
